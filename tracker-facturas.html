@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tracker Facturas Comisión · Cotown</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --primary: #1a56db;
+      --primary-dark: #1240a8;
+      --danger: #e02424;
+      --success: #057a55;
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      --radius: 10px;
+      --estado-0-bg: #fff3cd; --estado-0-color: #856404; --estado-0-border: #ffc107;
+      --estado-1-bg: #dbeafe; --estado-1-color: #1e40af; --estado-1-border: #3b82f6;
+      --estado-2-bg: #d1fae5; --estado-2-color: #065f46; --estado-2-border: #10b981;
+      --urg-alta-bg: #fee2e2; --urg-alta-color: #991b1b;
+      --urg-media-bg: #fff7ed; --urg-media-color: #92400e;
+      --urg-baja-bg: #ecfdf5; --urg-baja-color: #065f46;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 16px 24px; display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    header .logo { background: var(--primary); color: white; font-weight: 800; font-size: 14px; padding: 5px 10px; border-radius: 6px; }
+    header h1 { font-size: 17px; font-weight: 700; }
+    header .subtitle { font-size: 13px; color: var(--muted); margin-left: auto; }
+
+    .sync-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #9ca3af;
+      display: inline-block; margin-right: 5px; transition: background 0.3s;
+    }
+    .sync-dot.online { background: #10b981; }
+    .sync-status { font-size: 12px; color: var(--muted); display: flex; align-items: center; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 28px 20px; }
+
+    .form-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px 24px; margin-bottom: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .form-card h2 { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: var(--primary); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+    input, select, textarea {
+      width: 100%; border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px;
+      font-size: 14px; font-family: inherit; color: var(--text); background: white; outline: none; transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
+    textarea { resize: vertical; min-height: 64px; }
+
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 5px; }
+    .btn-avanzar { background: var(--primary); color: white; }
+    .btn-avanzar:hover { background: var(--primary-dark); }
+    .btn-eliminar { background: #fef2f2; color: var(--danger); border: 1px solid #fca5a5; }
+    .btn-eliminar:hover { background: #fee2e2; }
+
+    .filtros { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
+    .filtro-btn { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid var(--border); background: white; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .filtro-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .contador { margin-left: auto; font-size: 13px; color: var(--muted); }
+
+    .lista { display: flex; flex-direction: column; gap: 12px; }
+    .item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: box-shadow 0.15s; }
+    .item:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
+    .item-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+    .item-nombre { font-size: 16px; font-weight: 700; flex: 1; }
+
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 700; white-space: nowrap; border-width: 1px; border-style: solid; }
+    .badge-estado-0 { background: var(--estado-0-bg); color: var(--estado-0-color); border-color: var(--estado-0-border); }
+    .badge-estado-1 { background: var(--estado-1-bg); color: var(--estado-1-color); border-color: var(--estado-1-border); }
+    .badge-estado-2 { background: var(--estado-2-bg); color: var(--estado-2-color); border-color: var(--estado-2-border); }
+    .badge-urg-Alta { background: var(--urg-alta-bg); color: var(--urg-alta-color); border-color: #fca5a5; }
+    .badge-urg-Media { background: var(--urg-media-bg); color: var(--urg-media-color); border-color: #fed7aa; }
+    .badge-urg-Baja { background: var(--urg-baja-bg); color: var(--urg-baja-color); border-color: #6ee7b7; }
+
+    .item-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 8px; align-items: center; }
+    .item-nota { font-size: 13px; color: #374151; background: #f9fafb; border-radius: 6px; padding: 8px 10px; margin-bottom: 10px; border-left: 3px solid var(--border); }
+    .item-actions { display: flex; gap: 8px; align-items: center; }
+    .platform-icon { font-size: 13px; font-weight: 700; background: #f3f4f6; padding: 2px 7px; border-radius: 5px; color: #374151; }
+
+    .estados-labels { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .estado-label { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-0 { background: #ffc107; } .dot-1 { background: #3b82f6; } .dot-2 { background: #10b981; }
+
+    .empty { text-align: center; padding: 48px 20px; color: var(--muted); }
+    .empty .icon { font-size: 40px; margin-bottom: 10px; }
+    .empty p { font-size: 14px; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal h3 { margin-bottom: 10px; font-size: 16px; }
+    .modal p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: auto; }
+      header .subtitle { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo">COTOWN</span>
+  <h1>🧾 Tracker Facturas Comisión</h1>
+  <span class="subtitle" style="display:flex;align-items:center;gap:8px;">
+    <span class="sync-status"><span class="sync-dot" id="sync-dot"></span><span id="sync-text">Conectando...</span></span>
+  </span>
+</header>
+
+<div class="container">
+
+  <div class="form-card">
+    <h2>➕ Nueva factura pendiente</h2>
+    <div class="form-grid">
+      <div>
+        <label>Nombre del cliente *</label>
+        <input type="text" id="inp-nombre" placeholder="Ej: María García" />
+      </div>
+      <div>
+        <label>Plataforma *</label>
+        <select id="inp-plataforma">
+          <option value="">Selecciona...</option>
+          <option>Airbnb</option>
+          <option>Housing Anywhere</option>
+          <option>Booking.com</option>
+          <option>Spotahome</option>
+          <option>Uniplaces</option>
+          <option>Flatio</option>
+          <option>Homelike</option>
+          <option>Otra</option>
+        </select>
+      </div>
+      <div>
+        <label>Urgencia</label>
+        <select id="inp-urgencia">
+          <option value="Media">Media</option>
+          <option value="Alta">🔴 Alta</option>
+          <option value="Baja">🟢 Baja</option>
+        </select>
+      </div>
+      <div>
+        <label>Importe (€) — opcional</label>
+        <input type="number" id="inp-importe" placeholder="Ej: 145.00" step="0.01" min="0" />
+      </div>
+      <div class="full">
+        <label>Nota — opcional</label>
+        <textarea id="inp-nota" placeholder="Referencia, periodo, observaciones..."></textarea>
+      </div>
+    </div>
+    <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+      <button class="btn btn-primary" id="btn-agregar" onclick="agregarFactura()">➕ Añadir factura</button>
+    </div>
+  </div>
+
+  <div class="estados-labels">
+    <span class="estado-label"><span class="dot dot-0"></span> Pendiente de reclamar a Reservas</span>
+    <span class="estado-label"><span class="dot dot-1"></span> Enviado por Reservas · Pendiente SAP</span>
+    <span class="estado-label"><span class="dot dot-2"></span> Validado en SAP</span>
+  </div>
+
+  <div class="filtros">
+    <button class="filtro-btn active" onclick="setFiltro('todos', this)">Todos</button>
+    <button class="filtro-btn" onclick="setFiltro(0, this)">⏳ Pendiente Reservas</button>
+    <button class="filtro-btn" onclick="setFiltro(1, this)">📤 Pendiente SAP</button>
+    <button class="filtro-btn" onclick="setFiltro(2, this)">✅ Validado SAP</button>
+    <span class="contador" id="contador">—</span>
+  </div>
+
+  <div class="lista" id="lista">
+    <div class="empty"><div class="icon">⏳</div><p>Conectando con la base de datos...</p></div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modal-eliminar">
+  <div class="modal">
+    <h3>🗑️ Eliminar factura</h3>
+    <p>¿Seguro que quieres eliminar esta entrada? Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="btn" style="background:#f3f4f6;color:#374151" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn" style="background:var(--danger);color:white" onclick="confirmarEliminar()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  // ── Firebase config ──────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyAq_xGki0Ybw3C1M49u1OMOjJAXiOEWPy8",
+    authDomain: "cotown-facturas.firebaseapp.com",
+    databaseURL: "https://cotown-facturas-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "cotown-facturas",
+    storageBucket: "cotown-facturas.firebasestorage.app",
+    messagingSenderId: "65126986169",
+    appId: "1:65126986169:web:1c14b7e02d1ca46cd28668"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const ref = db.ref('facturas');
+
+  // ── Estado local ─────────────────────────────────────────────
+  let facturas = {};
+  let filtroActual = 'todos';
+  let eliminarId = null;
+
+  const ESTADOS = [
+    { label: '⏳ Pendiente de reclamar',    clase: 'badge-estado-0', siguiente: '📤 Marcar como enviado por Reservas' },
+    { label: '📤 Enviado · Pendiente SAP',  clase: 'badge-estado-1', siguiente: '✅ Marcar como validado en SAP' },
+    { label: '✅ Validado en SAP',           clase: 'badge-estado-2', siguiente: null },
+  ];
+
+  // ── Conexión en tiempo real ───────────────────────────────────
+  db.ref('.info/connected').on('value', snap => {
+    const online = snap.val() === true;
+    document.getElementById('sync-dot').className = 'sync-dot' + (online ? ' online' : '');
+    document.getElementById('sync-text').textContent = online ? 'En línea · sincronizado' : 'Sin conexión';
+  });
+
+  ref.on('value', snap => {
+    facturas = snap.val() || {};
+    renderLista();
+  });
+
+  // ── Agregar ───────────────────────────────────────────────────
+  function agregarFactura() {
+    const nombre    = document.getElementById('inp-nombre').value.trim();
+    const plataforma = document.getElementById('inp-plataforma').value;
+    const urgencia  = document.getElementById('inp-urgencia').value;
+    const importe   = document.getElementById('inp-importe').value;
+    const nota      = document.getElementById('inp-nota').value.trim();
+
+    if (!nombre)     { alert('Por favor escribe el nombre del cliente.'); return; }
+    if (!plataforma) { alert('Por favor selecciona la plataforma.'); return; }
+
+    const btn = document.getElementById('btn-agregar');
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+
+    ref.push({
+      nombre, plataforma, urgencia,
+      importe: importe ? parseFloat(importe) : null,
+      nota,
+      estado: 0,
+      fechaCreacion: new Date().toISOString(),
+      fechaActualizacion: new Date().toISOString(),
+    }).then(() => {
+      document.getElementById('inp-nombre').value = '';
+      document.getElementById('inp-plataforma').value = '';
+      document.getElementById('inp-urgencia').value = 'Media';
+      document.getElementById('inp-importe').value = '';
+      document.getElementById('inp-nota').value = '';
+      btn.disabled = false;
+      btn.textContent = '➕ Añadir factura';
+    }).catch(err => {
+      alert('Error al guardar: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = '➕ Añadir factura';
+    });
+  }
+
+  // ── Avanzar estado ────────────────────────────────────────────
+  function avanzarEstado(id) {
+    const f = facturas[id];
+    if (f && f.estado < 2) {
+      ref.child(id).update({
+        estado: f.estado + 1,
+        fechaActualizacion: new Date().toISOString()
+      });
+    }
+  }
+
+  // ── Eliminar ──────────────────────────────────────────────────
+  function abrirModalEliminar(id) {
+    eliminarId = id;
+    document.getElementById('modal-eliminar').classList.add('open');
+  }
+  function cerrarModal() {
+    document.getElementById('modal-eliminar').classList.remove('open');
+    eliminarId = null;
+  }
+  function confirmarEliminar() {
+    if (eliminarId) ref.child(eliminarId).remove();
+    cerrarModal();
+  }
+
+  // ── Filtros ───────────────────────────────────────────────────
+  function setFiltro(valor, btn) {
+    filtroActual = valor;
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLista();
+  }
+
+  // ── Render ────────────────────────────────────────────────────
+  function formatFecha(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit', year:'2-digit' })
+      + ' ' + d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function renderLista() {
+    const lista = document.getElementById('lista');
+
+    let arr = Object.entries(facturas).map(([id, f]) => ({ id, ...f }));
+
+    if (filtroActual !== 'todos') arr = arr.filter(f => f.estado === filtroActual);
+
+    // Alta urgencia primero, luego más reciente
+    arr.sort((a, b) => {
+      const u = { Alta: 0, Media: 1, Baja: 2 };
+      if (u[a.urgencia] !== u[b.urgencia]) return u[a.urgencia] - u[b.urgencia];
+      return new Date(b.fechaCreacion) - new Date(a.fechaCreacion);
+    });
+
+    document.getElementById('contador').textContent =
+      arr.length + (arr.length === 1 ? ' factura' : ' facturas');
+
+    if (arr.length === 0) {
+      lista.innerHTML = `<div class="empty"><div class="icon">📭</div><p>No hay facturas en este estado.</p></div>`;
+      return;
+    }
+
+    lista.innerHTML = arr.map(f => {
+      const est = ESTADOS[f.estado];
+      const importeStr = f.importe != null ? `<strong>${parseFloat(f.importe).toFixed(2)} €</strong>` : '';
+      const actualizado = f.fechaActualizacion && f.fechaActualizacion !== f.fechaCreacion
+        ? `<span>· Act: ${formatFecha(f.fechaActualizacion)}</span>` : '';
+
+      return `
+        <div class="item">
+          <div class="item-header">
+            <div class="item-nombre">${esc(f.nombre)}</div>
+            <span class="badge ${est.clase}">${est.label}</span>
+          </div>
+          <div class="item-meta">
+            <span class="platform-icon">${esc(f.plataforma)}</span>
+            <span class="badge badge-urg-${f.urgencia}">⚡ ${f.urgencia}</span>
+            ${importeStr}
+            <span>📅 ${formatFecha(f.fechaCreacion)}</span>
+            ${actualizado}
+          </div>
+          ${f.nota ? `<div class="item-nota">💬 ${esc(f.nota)}</div>` : ''}
+          <div class="item-actions">
+            ${est.siguiente
+              ? `<button class="btn btn-sm btn-avanzar" onclick="avanzarEstado('${f.id}')">${est.siguiente}</button>`
+              : '<span style="font-size:13px;color:var(--success);font-weight:600;">✅ Completado</span>'
+            }
+            <button class="btn btn-sm btn-eliminar" onclick="abrirModalEliminar('${f.id}')">🗑️ Eliminar</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('modal-eliminar').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+  });
+</script>
+</body>
+</html>
