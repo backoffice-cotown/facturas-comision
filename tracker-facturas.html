@@ -6,114 +6,205 @@
   <title>Tracker Facturas Comisión · Cotown</title>
   <style>
     :root {
-      --bg: #f4f6fb;
+      --bg: #f0f4fb;
       --card: #ffffff;
       --primary: #1a56db;
       --primary-dark: #1240a8;
-      --danger: #e02424;
-      --success: #057a55;
+      --primary-light: #eff6ff;
+      --danger: #dc2626;
+      --danger-light: #fee2e2;
+      --success: #059669;
       --border: #e5e7eb;
+      --border-dark: #d1d5db;
       --text: #111827;
+      --text-2: #374151;
       --muted: #6b7280;
-      --radius: 10px;
-      --estado-0-bg: #fff3cd; --estado-0-color: #856404; --estado-0-border: #ffc107;
-      --estado-1-bg: #dbeafe; --estado-1-color: #1e40af; --estado-1-border: #3b82f6;
-      --estado-2-bg: #d1fae5; --estado-2-color: #065f46; --estado-2-border: #10b981;
-      --urg-alta-bg: #fee2e2; --urg-alta-color: #991b1b;
-      --urg-media-bg: #fff7ed; --urg-media-color: #92400e;
-      --urg-baja-bg: #ecfdf5; --urg-baja-color: #065f46;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --estado-0-bg: #fffbeb; --estado-0-color: #92400e; --estado-0-border: #fcd34d;
+      --estado-1-bg: #eff6ff; --estado-1-color: #1e40af; --estado-1-border: #93c5fd;
+      --estado-2-bg: #ecfdf5; --estado-2-color: #065f46; --estado-2-border: #6ee7b7;
+      --urg-alta-bg: #fee2e2; --urg-alta-color: #991b1b; --urg-alta-border: #fca5a5;
+      --urg-media-bg: #fff7ed; --urg-media-color: #9a3412; --urg-media-border: #fdba74;
+      --urg-baja-bg: #ecfdf5; --urg-baja-color: #065f46; --urg-baja-border: #6ee7b7;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
+    /* ── Header ── */
     header {
-      background: var(--card); border-bottom: 1px solid var(--border);
-      padding: 16px 24px; display: flex; align-items: center; gap: 12px;
-      position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      background: white; border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 8px rgba(0,0,0,0.06);
     }
-    header .logo { background: var(--primary); color: white; font-weight: 800; font-size: 14px; padding: 5px 10px; border-radius: 6px; }
-    header h1 { font-size: 17px; font-weight: 700; }
-    header .subtitle { font-size: 13px; color: var(--muted); margin-left: auto; }
-
-    .sync-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: #9ca3af;
-      display: inline-block; margin-right: 5px; transition: background 0.3s;
-    }
+    .logo { background: var(--primary); color: white; font-weight: 800; font-size: 12px; padding: 5px 9px; border-radius: 6px; letter-spacing: 0.5px; }
+    header h1 { font-size: 16px; font-weight: 700; }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #9ca3af; display: inline-block; margin-right: 4px; transition: background 0.3s; }
     .sync-dot.online { background: #10b981; }
     .sync-status { font-size: 12px; color: var(--muted); display: flex; align-items: center; }
+    .btn-icon { background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--muted); transition: all 0.15s; display: flex; align-items: center; gap: 5px; font-family: inherit; font-weight: 600; }
+    .btn-icon:hover { background: #f9fafb; color: var(--text); border-color: var(--border-dark); }
 
-    .container { max-width: 900px; margin: 0 auto; padding: 28px 20px; }
+    /* ── Stats Bar ── */
+    .stats-bar { background: white; border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; gap: 0; overflow-x: auto; }
+    .stat-item { display: flex; flex-direction: column; gap: 2px; min-width: fit-content; padding: 4px 20px 4px 0; }
+    .stat-item:not(:last-child) { border-right: 1px solid var(--border); margin-right: 20px; }
+    .stat-value { font-size: 22px; font-weight: 800; line-height: 1.1; }
+    .stat-label { font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
+    .stat-0 { color: #92400e; } .stat-1 { color: #1e40af; } .stat-2 { color: #059669; }
+    .stat-duda { color: #7c3aed; } .stat-total { color: var(--primary); }
 
-    .form-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 20px 24px; margin-bottom: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .form-card h2 { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: var(--primary); }
+    /* ── Container ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+
+    /* ── Tipo Toggle ── */
+    .tipo-toggle { display: flex; gap: 0; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+    .tipo-btn { flex: 1; padding: 9px 16px; background: white; border: none; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); font-family: inherit; transition: all 0.15s; }
+    .tipo-btn:not(:last-child) { border-right: 1.5px solid var(--border); }
+    .tipo-btn.active-factura { background: #eff6ff; color: var(--primary); }
+    .tipo-btn.active-duda { background: #f5f3ff; color: #7c3aed; }
+    .tipo-btn:hover:not(.active-factura):not(.active-duda) { background: #f9fafb; }
+
+    /* ── Form Card ── */
+    .form-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); overflow: hidden; }
+    .form-card-header { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: #fafbff; }
+    .form-card-header h2 { font-size: 14px; font-weight: 700; color: var(--primary); transition: color 0.2s; }
+    .form-card-header h2.duda-mode { color: #7c3aed; }
+    .form-card-body { padding: 18px 20px; }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .form-grid .full { grid-column: 1 / -1; }
-
-    label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-    input, select, textarea {
-      width: 100%; border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px;
-      font-size: 14px; font-family: inherit; color: var(--text); background: white; outline: none; transition: border-color 0.15s;
-    }
+    label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.6px; }
+    input, select, textarea { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 14px; font-family: inherit; color: var(--text); background: white; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
-    textarea { resize: vertical; min-height: 64px; }
+    textarea { resize: vertical; min-height: 60px; }
 
-    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
     .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 5px; }
-    .btn-avanzar { background: var(--primary); color: white; }
-    .btn-avanzar:hover { background: var(--primary-dark); }
-    .btn-eliminar { background: #fef2f2; color: var(--danger); border: 1px solid #fca5a5; }
-    .btn-eliminar:hover { background: #fee2e2; }
+    .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 4px 12px rgba(26,86,219,0.25); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+    .btn-purple { background: #7c3aed; color: white; }
+    .btn-purple:hover { background: #6d28d9; box-shadow: 0 4px 12px rgba(124,58,237,0.25); }
+    .btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 6px; }
+    .btn-avanzar { background: var(--primary-light); color: var(--primary); border: 1px solid #bfdbfe; }
+    .btn-avanzar:hover { background: #dbeafe; }
+    .btn-eliminar { background: #fff5f5; color: var(--danger); border: 1px solid #fecaca; }
+    .btn-eliminar:hover { background: var(--danger-light); }
+    .btn-editar { background: #f9fafb; color: var(--text-2); border: 1px solid var(--border); }
+    .btn-editar:hover { background: #f3f4f6; }
+    .btn-comentar { background: #f9fafb; color: var(--muted); border: 1px solid var(--border); }
+    .btn-comentar:hover { background: #f3f4f6; color: var(--text); }
+    .btn-cancel { background: #f3f4f6; color: #374151; border: 1px solid var(--border); }
+    .btn-cancel:hover { background: #e5e7eb; }
 
-    .filtros { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
-    .filtro-btn { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid var(--border); background: white; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    /* ── Search & Filtros ── */
+    .search-filtros { margin-bottom: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .search-box { position: relative; max-width: 360px; }
+    .search-box input { padding-left: 34px; }
+    .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; }
+    .filtros { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+    .filtro-btn { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1.5px solid var(--border); background: white; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .filtro-btn:hover { border-color: var(--primary); color: var(--primary); }
     .filtro-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-    .contador { margin-left: auto; font-size: 13px; color: var(--muted); }
+    .contador { margin-left: auto; font-size: 12px; color: var(--muted); font-weight: 600; }
 
-    .lista { display: flex; flex-direction: column; gap: 12px; }
-    .item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: box-shadow 0.15s; }
-    .item:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
-    .item-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
-    .item-nombre { font-size: 16px; font-weight: 700; flex: 1; }
+    /* ── Leyenda ── */
+    .estados-labels { display: flex; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; background: white; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 14px; }
+    .estado-label { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-0 { background: #f59e0b; } .dot-1 { background: #3b82f6; } .dot-2 { background: #10b981; }
 
-    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 700; white-space: nowrap; border-width: 1px; border-style: solid; }
+    /* ── Sección headers ── */
+    .seccion-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: var(--radius-sm);
+      margin-bottom: 10px; margin-top: 8px;
+    }
+    .seccion-header:first-child { margin-top: 0; }
+    .seccion-header h3 { font-size: 14px; font-weight: 700; flex: 1; }
+    .seccion-count { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
+    .seccion-facturas { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .seccion-facturas h3 { color: var(--primary); }
+    .seccion-facturas .seccion-count { background: var(--primary); color: white; }
+    .seccion-dudas { background: #f5f3ff; border: 1px solid #ddd6fe; margin-top: 24px; }
+    .seccion-dudas h3 { color: #7c3aed; }
+    .seccion-dudas .seccion-count { background: #7c3aed; color: white; }
+    .seccion-toggle { background: none; border: none; cursor: pointer; font-size: 13px; color: var(--muted); padding: 3px 6px; border-radius: 5px; }
+    .seccion-toggle:hover { background: rgba(0,0,0,0.05); }
+
+    /* ── Badge duda ── */
+    .badge-duda { background: #f5f3ff; color: #6d28d9; border: 1.5px solid #ddd6fe; }
+
+    /* ── Items ── */
+    .lista { display: flex; flex-direction: column; gap: 10px; }
+    .item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: box-shadow 0.15s; overflow: hidden; }
+    .item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+    .item.urgente { border-left: 3px solid #ef4444; }
+    .item.es-duda { border-left: 3px solid #7c3aed; }
+    .item-main { padding: 14px 16px; }
+    .item-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+    .item-nombre { font-size: 15px; font-weight: 700; flex: 1; }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; border-width: 1.5px; border-style: solid; }
     .badge-estado-0 { background: var(--estado-0-bg); color: var(--estado-0-color); border-color: var(--estado-0-border); }
     .badge-estado-1 { background: var(--estado-1-bg); color: var(--estado-1-color); border-color: var(--estado-1-border); }
     .badge-estado-2 { background: var(--estado-2-bg); color: var(--estado-2-color); border-color: var(--estado-2-border); }
-    .badge-urg-Alta { background: var(--urg-alta-bg); color: var(--urg-alta-color); border-color: #fca5a5; }
-    .badge-urg-Media { background: var(--urg-media-bg); color: var(--urg-media-color); border-color: #fed7aa; }
-    .badge-urg-Baja { background: var(--urg-baja-bg); color: var(--urg-baja-color); border-color: #6ee7b7; }
+    .badge-urg-Alta { background: var(--urg-alta-bg); color: var(--urg-alta-color); border-color: var(--urg-alta-border); }
+    .badge-urg-Media { background: var(--urg-media-bg); color: var(--urg-media-color); border-color: var(--urg-media-border); }
+    .badge-urg-Baja { background: var(--urg-baja-bg); color: var(--urg-baja-color); border-color: var(--urg-baja-border); }
+    .item-meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 8px; align-items: center; }
+    .platform-tag { font-size: 12px; font-weight: 700; background: #f3f4f6; padding: 2px 8px; border-radius: 5px; color: #374151; border: 1px solid var(--border); }
+    .item-nota { font-size: 13px; color: var(--text-2); background: #fafafa; border-radius: 6px; padding: 7px 10px; margin-bottom: 10px; border-left: 3px solid #e5e7eb; }
+    .item-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 
-    .item-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 8px; align-items: center; }
-    .item-nota { font-size: 13px; color: #374151; background: #f9fafb; border-radius: 6px; padding: 8px 10px; margin-bottom: 10px; border-left: 3px solid var(--border); }
-    .item-actions { display: flex; gap: 8px; align-items: center; }
-    .platform-icon { font-size: 13px; font-weight: 700; background: #f3f4f6; padding: 2px 7px; border-radius: 5px; color: #374151; }
+    /* ── Comentarios ── */
+    .item-comments { border-top: 1px solid var(--border); background: #fafbff; padding: 12px 16px; }
+    .comments-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .comment-count-badge { background: #e5e7eb; padding: 1px 7px; border-radius: 10px; font-size: 11px; color: var(--muted); }
+    .comment-item { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; }
+    .comment-text { font-size: 13px; color: var(--text-2); margin-bottom: 4px; word-break: break-word; }
+    .comment-meta { font-size: 11px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+    .comment-delete { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 11px; padding: 0; transition: color 0.15s; font-family: inherit; }
+    .comment-delete:hover { color: var(--danger); }
+    .comment-form { display: flex; gap: 8px; margin-top: 8px; }
+    .comment-form input { flex: 1; font-size: 13px; padding: 7px 10px; border-radius: 6px; }
+    .btn-send-comment { background: var(--primary); color: white; border: none; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; transition: background 0.15s; }
+    .btn-send-comment:hover { background: var(--primary-dark); }
 
-    .estados-labels { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-    .estado-label { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
-    .dot { width: 8px; height: 8px; border-radius: 50%; }
-    .dot-0 { background: #ffc107; } .dot-1 { background: #3b82f6; } .dot-2 { background: #10b981; }
+    /* ── Empty ── */
+    .empty-section { text-align: center; padding: 20px; color: var(--muted); font-size: 13px; background: white; border: 1px dashed var(--border); border-radius: var(--radius-sm); }
 
-    .empty { text-align: center; padding: 48px 20px; color: var(--muted); }
-    .empty .icon { font-size: 40px; margin-bottom: 10px; }
-    .empty p { font-size: 14px; }
-
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; }
+    /* ── Modals ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(17,24,39,0.45); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
     .modal-overlay.open { display: flex; }
-    .modal { background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-    .modal h3 { margin-bottom: 10px; font-size: 16px; }
-    .modal p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .modal { background: white; border-radius: 14px; padding: 24px; width: 90%; max-width: 500px; box-shadow: 0 25px 60px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+    .modal h3 { margin-bottom: 4px; font-size: 17px; font-weight: 700; }
+    .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-grid .full { grid-column: 1 / -1; }
+
+    /* Platform manager */
+    .platform-list { margin-bottom: 12px; max-height: 240px; overflow-y: auto; }
+    .platform-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #f9fafb; border: 1px solid var(--border); border-radius: 7px; margin-bottom: 6px; }
+    .platform-row span { flex: 1; font-size: 14px; font-weight: 600; }
+    .platform-default-tag { font-size: 10px; color: var(--muted); background: #e5e7eb; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+    .btn-rm-platform { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 15px; padding: 3px 7px; border-radius: 5px; transition: all 0.15s; }
+    .btn-rm-platform:hover { background: var(--danger-light); color: var(--danger); }
+    .add-platform-row { display: flex; gap: 8px; }
+    .add-platform-row input { flex: 1; font-size: 14px; }
+    .btn-add-pl { background: var(--primary); color: white; border: none; border-radius: 7px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .btn-add-pl:hover { background: var(--primary-dark); }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1f2937; color: white; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 999; transition: transform 0.3s; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+    .toast.show { transform: translateX(-50%) translateY(0); }
 
     @media (max-width: 600px) {
-      .form-grid { grid-template-columns: 1fr; }
-      .form-grid .full { grid-column: auto; }
-      header .subtitle { display: none; }
+      .form-grid, .modal-grid { grid-template-columns: 1fr; }
+      .form-grid .full, .modal-grid .full { grid-column: auto; }
+      header h1 { font-size: 14px; }
+      .tipo-btn { font-size: 12px; padding: 8px 10px; }
     }
   </style>
 </head>
@@ -122,93 +213,197 @@
 <header>
   <span class="logo">COTOWN</span>
   <h1>🧾 Tracker Facturas Comisión</h1>
-  <span class="subtitle" style="display:flex;align-items:center;gap:8px;">
-    <span class="sync-status"><span class="sync-dot" id="sync-dot"></span><span id="sync-text">Conectando...</span></span>
-  </span>
+  <div class="header-right">
+    <button class="btn-icon" onclick="abrirModalPlataformas()">⚙️ Plataformas</button>
+    <span class="sync-status">
+      <span class="sync-dot" id="sync-dot"></span>
+      <span id="sync-text">Conectando...</span>
+    </span>
+  </div>
 </header>
+
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-value stat-0" id="stat-0">—</span>
+    <span class="stat-label">⏳ Pendiente Reservas</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-value stat-1" id="stat-1">—</span>
+    <span class="stat-label">📤 Pendiente SAP</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-value stat-2" id="stat-2">—</span>
+    <span class="stat-label">✅ Validado SAP</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-value stat-duda" id="stat-dudas">—</span>
+    <span class="stat-label">❓ Dudas abiertas</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-value stat-total" id="stat-importe">—</span>
+    <span class="stat-label">💶 Total pendiente</span>
+  </div>
+</div>
 
 <div class="container">
 
+  <!-- Formulario -->
   <div class="form-card">
-    <h2>➕ Nueva factura pendiente</h2>
-    <div class="form-grid">
-      <div>
-        <label>Nombre del cliente *</label>
-        <input type="text" id="inp-nombre" placeholder="Ej: María García" />
-      </div>
-      <div>
-        <label>Plataforma *</label>
-        <select id="inp-plataforma">
-          <option value="">Selecciona...</option>
-          <option>Airbnb</option>
-          <option>Housing Anywhere</option>
-          <option>Booking.com</option>
-          <option>Spotahome</option>
-          <option>Uniplaces</option>
-          <option>Flatio</option>
-          <option>Homelike</option>
-          <option>Otra</option>
-        </select>
-      </div>
-      <div>
-        <label>Urgencia</label>
-        <select id="inp-urgencia">
-          <option value="Media">Media</option>
-          <option value="Alta">🔴 Alta</option>
-          <option value="Baja">🟢 Baja</option>
-        </select>
-      </div>
-      <div>
-        <label>Importe (€) — opcional</label>
-        <input type="number" id="inp-importe" placeholder="Ej: 145.00" step="0.01" min="0" />
-      </div>
-      <div class="full">
-        <label>Nota — opcional</label>
-        <textarea id="inp-nota" placeholder="Referencia, periodo, observaciones..."></textarea>
-      </div>
+    <div class="form-card-header">
+      <h2 id="form-title">➕ Nueva factura pendiente</h2>
     </div>
-    <div style="margin-top:14px; display:flex; justify-content:flex-end;">
-      <button class="btn btn-primary" id="btn-agregar" onclick="agregarFactura()">➕ Añadir factura</button>
+    <div class="form-card-body">
+      <!-- Selector de tipo -->
+      <div class="tipo-toggle">
+        <button class="tipo-btn active-factura" id="tbtn-factura" onclick="setTipoForm('factura', this)">📋 Factura pendiente</button>
+        <button class="tipo-btn" id="tbtn-duda" onclick="setTipoForm('duda', this)">❓ Duda o consulta</button>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label>Nombre / Referencia *</label>
+          <input type="text" id="inp-nombre" placeholder="Ej: María García" />
+        </div>
+        <div>
+          <label>Plataforma *</label>
+          <select id="inp-plataforma"><option value="">Selecciona...</option></select>
+        </div>
+        <div>
+          <label>Urgencia</label>
+          <select id="inp-urgencia">
+            <option value="Media">⚡ Media</option>
+            <option value="Alta">🔴 Alta</option>
+            <option value="Baja">🟢 Baja</option>
+          </select>
+        </div>
+        <div>
+          <label>Importe (€) — opcional</label>
+          <input type="number" id="inp-importe" placeholder="Ej: 145.00" step="0.01" min="0" />
+        </div>
+        <div class="full">
+          <label id="nota-label">Nota — opcional</label>
+          <textarea id="inp-nota" placeholder="Referencia, periodo, observaciones..."></textarea>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" id="btn-agregar" onclick="agregarFactura()">➕ Añadir factura</button>
+      </div>
     </div>
   </div>
 
+  <!-- Leyenda -->
   <div class="estados-labels">
     <span class="estado-label"><span class="dot dot-0"></span> Pendiente de reclamar a Reservas</span>
     <span class="estado-label"><span class="dot dot-1"></span> Enviado por Reservas · Pendiente SAP</span>
     <span class="estado-label"><span class="dot dot-2"></span> Validado en SAP</span>
   </div>
 
-  <div class="filtros">
-    <button class="filtro-btn active" onclick="setFiltro('todos', this)">Todos</button>
-    <button class="filtro-btn" onclick="setFiltro(0, this)">⏳ Pendiente Reservas</button>
-    <button class="filtro-btn" onclick="setFiltro(1, this)">📤 Pendiente SAP</button>
-    <button class="filtro-btn" onclick="setFiltro(2, this)">✅ Validado SAP</button>
-    <span class="contador" id="contador">—</span>
+  <!-- Búsqueda y filtros -->
+  <div class="search-filtros">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="inp-buscar" placeholder="Buscar por cliente, plataforma o nota..." oninput="renderLista()" />
+    </div>
+    <div class="filtros">
+      <button class="filtro-btn active" onclick="setFiltro('todos', this)">Todos</button>
+      <button class="filtro-btn" onclick="setFiltro(0, this)">⏳ Pendiente Reservas</button>
+      <button class="filtro-btn" onclick="setFiltro(1, this)">📤 Pendiente SAP</button>
+      <button class="filtro-btn" onclick="setFiltro(2, this)">✅ Validado SAP</button>
+      <span class="contador" id="contador">—</span>
+    </div>
   </div>
 
-  <div class="lista" id="lista">
-    <div class="empty"><div class="icon">⏳</div><p>Conectando con la base de datos...</p></div>
+  <div id="lista">
+    <div class="empty-section">⏳ Conectando con la base de datos...</div>
   </div>
-
 </div>
 
+<!-- Modal: Eliminar -->
 <div class="modal-overlay" id="modal-eliminar">
   <div class="modal">
-    <h3>🗑️ Eliminar factura</h3>
-    <p>¿Seguro que quieres eliminar esta entrada? Esta acción no se puede deshacer.</p>
+    <h3>🗑️ Eliminar entrada</h3>
+    <p class="modal-sub">¿Seguro que quieres eliminar esta entrada? Esta acción no se puede deshacer.</p>
     <div class="modal-actions">
-      <button class="btn" style="background:#f3f4f6;color:#374151" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-cancel" onclick="cerrarModal('modal-eliminar')">Cancelar</button>
       <button class="btn" style="background:var(--danger);color:white" onclick="confirmarEliminar()">Eliminar</button>
     </div>
   </div>
 </div>
 
-<!-- Firebase SDK -->
+<!-- Modal: Editar -->
+<div class="modal-overlay" id="modal-editar">
+  <div class="modal">
+    <h3>✏️ Editar entrada</h3>
+    <p class="modal-sub">Modifica los campos que necesites.</p>
+    <input type="hidden" id="edit-id" />
+    <div class="modal-grid">
+      <div class="full">
+        <label>Tipo</label>
+        <select id="edit-tipo">
+          <option value="factura">📋 Factura pendiente</option>
+          <option value="duda">❓ Duda o consulta</option>
+        </select>
+      </div>
+      <div class="full">
+        <label>Nombre / Referencia *</label>
+        <input type="text" id="edit-nombre" />
+      </div>
+      <div>
+        <label>Plataforma *</label>
+        <select id="edit-plataforma"><option value="">Selecciona...</option></select>
+      </div>
+      <div>
+        <label>Urgencia</label>
+        <select id="edit-urgencia">
+          <option value="Media">⚡ Media</option>
+          <option value="Alta">🔴 Alta</option>
+          <option value="Baja">🟢 Baja</option>
+        </select>
+      </div>
+      <div>
+        <label>Importe (€)</label>
+        <input type="number" id="edit-importe" placeholder="Ej: 145.00" step="0.01" min="0" />
+      </div>
+      <div>
+        <label>Estado</label>
+        <select id="edit-estado">
+          <option value="0">⏳ Pendiente de reclamar</option>
+          <option value="1">📤 Enviado · Pendiente SAP</option>
+          <option value="2">✅ Validado en SAP</option>
+        </select>
+      </div>
+      <div class="full">
+        <label>Nota</label>
+        <textarea id="edit-nota" placeholder="Referencia, periodo, observaciones..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="cerrarModal('modal-editar')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEdicion()">💾 Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Gestionar plataformas -->
+<div class="modal-overlay" id="modal-plataformas">
+  <div class="modal">
+    <h3>⚙️ Gestionar plataformas</h3>
+    <p class="modal-sub">Añade o elimina plataformas disponibles en el formulario.</p>
+    <div class="platform-list" id="platform-list"></div>
+    <div class="add-platform-row">
+      <input type="text" id="inp-nueva-plataforma" placeholder="Nueva plataforma..." onkeydown="if(event.key==='Enter')agregarPlataforma()" />
+      <button class="btn-add-pl" onclick="agregarPlataforma()">+ Añadir</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="cerrarModal('modal-plataformas')">✓ Listo</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
-  // ── Firebase config ──────────────────────────────────────────
   const firebaseConfig = {
     apiKey: "AIzaSyAq_xGki0Ybw3C1M49u1OMOjJAXiOEWPy8",
     authDomain: "cotown-facturas.firebaseapp.com",
@@ -218,94 +413,255 @@
     messagingSenderId: "65126986169",
     appId: "1:65126986169:web:1c14b7e02d1ca46cd28668"
   };
-
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  const ref = db.ref('facturas');
+  const facturasRef = db.ref('facturas');
+  const comentariosRef = db.ref('comentarios');
+  const configRef = db.ref('config');
 
-  // ── Estado local ─────────────────────────────────────────────
   let facturas = {};
+  let comentarios = {};
   let filtroActual = 'todos';
   let eliminarId = null;
+  let expandedComments = new Set();
+  let tipoFormActual = 'factura';
+  let seccionDudasColapsada = false;
+
+  const PLATAFORMAS_DEFAULT = ['Airbnb', 'Housing Anywhere', 'Booking.com', 'Spotahome', 'Uniplaces', 'Flatio', 'Homelike', 'Otra'];
+  let plataformas = [...PLATAFORMAS_DEFAULT];
 
   const ESTADOS = [
-    { label: '⏳ Pendiente de reclamar',    clase: 'badge-estado-0', siguiente: '📤 Marcar como enviado por Reservas' },
-    { label: '📤 Enviado · Pendiente SAP',  clase: 'badge-estado-1', siguiente: '✅ Marcar como validado en SAP' },
-    { label: '✅ Validado en SAP',           clase: 'badge-estado-2', siguiente: null },
+    { label: '⏳ Pendiente de reclamar', clase: 'badge-estado-0', siguiente: '📤 Enviado por Reservas' },
+    { label: '📤 Enviado · Pendiente SAP', clase: 'badge-estado-1', siguiente: '✅ Validado en SAP' },
+    { label: '✅ Validado en SAP', clase: 'badge-estado-2', siguiente: null },
   ];
 
-  // ── Conexión en tiempo real ───────────────────────────────────
+  // ── Conexión ──────────────────────────────────────────────────
   db.ref('.info/connected').on('value', snap => {
     const online = snap.val() === true;
     document.getElementById('sync-dot').className = 'sync-dot' + (online ? ' online' : '');
     document.getElementById('sync-text').textContent = online ? 'En línea · sincronizado' : 'Sin conexión';
   });
 
-  ref.on('value', snap => {
+  facturasRef.on('value', snap => {
     facturas = snap.val() || {};
+    renderLista();
+    renderStats();
+  });
+
+  comentariosRef.on('value', snap => {
+    comentarios = snap.val() || {};
     renderLista();
   });
 
+  configRef.child('plataformas').on('value', snap => {
+    const data = snap.val();
+    plataformas = (data && Array.isArray(data) && data.length > 0) ? data : [...PLATAFORMAS_DEFAULT];
+    renderPlataformasSelects();
+    renderPlatformList();
+  });
+
+  // ── Tipo form ─────────────────────────────────────────────────
+  function setTipoForm(tipo, btn) {
+    tipoFormActual = tipo;
+    document.querySelectorAll('.tipo-btn').forEach(b => {
+      b.classList.remove('active-factura', 'active-duda');
+    });
+    btn.classList.add(tipo === 'factura' ? 'active-factura' : 'active-duda');
+    const title = document.getElementById('form-title');
+    const notaLabel = document.getElementById('nota-label');
+    const btnAgregar = document.getElementById('btn-agregar');
+    if (tipo === 'factura') {
+      title.textContent = '➕ Nueva factura pendiente';
+      title.classList.remove('duda-mode');
+      notaLabel.textContent = 'Nota — opcional';
+      document.getElementById('inp-nota').placeholder = 'Referencia, periodo, observaciones...';
+      btnAgregar.className = 'btn btn-primary';
+      btnAgregar.textContent = '➕ Añadir factura';
+    } else {
+      title.textContent = '❓ Nueva duda o consulta';
+      title.classList.add('duda-mode');
+      notaLabel.textContent = 'Descripción de la duda *';
+      document.getElementById('inp-nota').placeholder = 'Describe la duda o consulta sobre este cliente...';
+      btnAgregar.className = 'btn btn-purple';
+      btnAgregar.textContent = '❓ Añadir duda';
+    }
+  }
+
+  // ── Plataformas ───────────────────────────────────────────────
+  function renderPlataformasSelects() {
+    ['inp-plataforma', 'edit-plataforma'].forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      const val = sel.value;
+      sel.innerHTML = '<option value="">Selecciona...</option>';
+      plataformas.forEach(p => {
+        const o = document.createElement('option');
+        o.value = p; o.textContent = p;
+        sel.appendChild(o);
+      });
+      if (val) sel.value = val;
+    });
+  }
+
+  function renderPlatformList() {
+    const list = document.getElementById('platform-list');
+    if (!list) return;
+    list.innerHTML = plataformas.map((p, i) => `
+      <div class="platform-row">
+        <span>${esc(p)}</span>
+        ${PLATAFORMAS_DEFAULT.includes(p) ? '<span class="platform-default-tag">predeterminada</span>' : ''}
+        <button class="btn-rm-platform" onclick="eliminarPlataforma(${i})">✕</button>
+      </div>`).join('');
+  }
+
+  function agregarPlataforma() {
+    const inp = document.getElementById('inp-nueva-plataforma');
+    const nombre = inp.value.trim();
+    if (!nombre) return;
+    if (plataformas.map(p => p.toLowerCase()).includes(nombre.toLowerCase())) { toast('⚠️ Esa plataforma ya existe'); return; }
+    plataformas = [...plataformas, nombre];
+    configRef.child('plataformas').set(plataformas);
+    inp.value = '';
+    toast('✅ Plataforma añadida');
+  }
+
+  function eliminarPlataforma(idx) {
+    if (!confirm(`¿Eliminar "${plataformas[idx]}"? Las entradas existentes no se verán afectadas.`)) return;
+    plataformas = plataformas.filter((_, i) => i !== idx);
+    configRef.child('plataformas').set(plataformas);
+    toast('🗑️ Plataforma eliminada');
+  }
+
+  function abrirModalPlataformas() {
+    renderPlatformList();
+    document.getElementById('modal-plataformas').classList.add('open');
+  }
+
+  // ── Stats ─────────────────────────────────────────────────────
+  function renderStats() {
+    const arr = Object.values(facturas);
+    const soloFacturas = arr.filter(f => !f.tipo || f.tipo === 'factura');
+    [0, 1, 2].forEach(e => {
+      document.getElementById('stat-' + e).textContent = soloFacturas.filter(f => f.estado === e).length;
+    });
+    const dudas = arr.filter(f => f.tipo === 'duda');
+    document.getElementById('stat-dudas').textContent = dudas.length;
+    const total = soloFacturas.filter(f => f.estado < 2 && f.importe != null)
+      .reduce((s, f) => s + parseFloat(f.importe || 0), 0);
+    document.getElementById('stat-importe').textContent =
+      total > 0 ? total.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €' : '—';
+  }
+
   // ── Agregar ───────────────────────────────────────────────────
   function agregarFactura() {
-    const nombre    = document.getElementById('inp-nombre').value.trim();
+    const nombre     = document.getElementById('inp-nombre').value.trim();
     const plataforma = document.getElementById('inp-plataforma').value;
-    const urgencia  = document.getElementById('inp-urgencia').value;
-    const importe   = document.getElementById('inp-importe').value;
-    const nota      = document.getElementById('inp-nota').value.trim();
-
-    if (!nombre)     { alert('Por favor escribe el nombre del cliente.'); return; }
-    if (!plataforma) { alert('Por favor selecciona la plataforma.'); return; }
-
+    const urgencia   = document.getElementById('inp-urgencia').value;
+    const importe    = document.getElementById('inp-importe').value;
+    const nota       = document.getElementById('inp-nota').value.trim();
+    if (!nombre)     { toast('⚠️ Escribe el nombre o referencia'); return; }
+    if (!plataforma) { toast('⚠️ Selecciona la plataforma'); return; }
+    if (tipoFormActual === 'duda' && !nota) { toast('⚠️ Describe la duda'); return; }
     const btn = document.getElementById('btn-agregar');
-    btn.disabled = true;
-    btn.textContent = 'Guardando...';
-
-    ref.push({
-      nombre, plataforma, urgencia,
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    facturasRef.push({
+      nombre, plataforma, urgencia, tipo: tipoFormActual,
       importe: importe ? parseFloat(importe) : null,
-      nota,
-      estado: 0,
+      nota, estado: 0,
       fechaCreacion: new Date().toISOString(),
       fechaActualizacion: new Date().toISOString(),
     }).then(() => {
-      document.getElementById('inp-nombre').value = '';
+      ['inp-nombre', 'inp-importe', 'inp-nota'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('inp-plataforma').value = '';
       document.getElementById('inp-urgencia').value = 'Media';
-      document.getElementById('inp-importe').value = '';
-      document.getElementById('inp-nota').value = '';
       btn.disabled = false;
-      btn.textContent = '➕ Añadir factura';
-    }).catch(err => {
-      alert('Error al guardar: ' + err.message);
-      btn.disabled = false;
-      btn.textContent = '➕ Añadir factura';
-    });
+      setTipoForm(tipoFormActual, document.getElementById('tbtn-' + tipoFormActual));
+      toast(tipoFormActual === 'factura' ? '✅ Factura añadida' : '✅ Duda añadida');
+    }).catch(err => { toast('❌ Error: ' + err.message); btn.disabled = false; });
   }
 
   // ── Avanzar estado ────────────────────────────────────────────
   function avanzarEstado(id) {
     const f = facturas[id];
     if (f && f.estado < 2) {
-      ref.child(id).update({
-        estado: f.estado + 1,
-        fechaActualizacion: new Date().toISOString()
-      });
+      facturasRef.child(id).update({ estado: f.estado + 1, fechaActualizacion: new Date().toISOString() });
     }
   }
 
+  // ── Editar ────────────────────────────────────────────────────
+  function abrirEditar(id) {
+    const f = facturas[id];
+    if (!f) return;
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-nombre').value = f.nombre || '';
+    document.getElementById('edit-tipo').value = f.tipo || 'factura';
+    document.getElementById('edit-urgencia').value = f.urgencia || 'Media';
+    document.getElementById('edit-importe').value = f.importe != null ? f.importe : '';
+    document.getElementById('edit-nota').value = f.nota || '';
+    document.getElementById('edit-estado').value = String(f.estado ?? 0);
+    renderPlataformasSelects();
+    setTimeout(() => { document.getElementById('edit-plataforma').value = f.plataforma || ''; }, 0);
+    document.getElementById('modal-editar').classList.add('open');
+  }
+
+  function guardarEdicion() {
+    const id         = document.getElementById('edit-id').value;
+    const nombre     = document.getElementById('edit-nombre').value.trim();
+    const plataforma = document.getElementById('edit-plataforma').value;
+    const urgencia   = document.getElementById('edit-urgencia').value;
+    const importe    = document.getElementById('edit-importe').value;
+    const nota       = document.getElementById('edit-nota').value.trim();
+    const estado     = parseInt(document.getElementById('edit-estado').value);
+    const tipo       = document.getElementById('edit-tipo').value;
+    if (!nombre)     { toast('⚠️ Escribe el nombre'); return; }
+    if (!plataforma) { toast('⚠️ Selecciona la plataforma'); return; }
+    facturasRef.child(id).update({
+      nombre, plataforma, urgencia, estado, tipo,
+      importe: importe ? parseFloat(importe) : null,
+      nota, fechaActualizacion: new Date().toISOString()
+    }).then(() => { cerrarModal('modal-editar'); toast('✅ Cambios guardados'); })
+      .catch(err => toast('❌ Error: ' + err.message));
+  }
+
+  // ── Comentarios ───────────────────────────────────────────────
+  function toggleComentarios(id) {
+    expandedComments.has(id) ? expandedComments.delete(id) : expandedComments.add(id);
+    renderLista();
+  }
+
+  function enviarComentario(id) {
+    const inp = document.getElementById('cinp-' + id);
+    if (!inp) return;
+    const texto = inp.value.trim();
+    if (!texto) return;
+    comentariosRef.child(id).push({ texto, fecha: new Date().toISOString() })
+      .then(() => { inp.value = ''; });
+  }
+
+  function eliminarComentario(fId, cId) {
+    if (!confirm('¿Eliminar este comentario?')) return;
+    comentariosRef.child(fId).child(cId).remove();
+  }
+
   // ── Eliminar ──────────────────────────────────────────────────
-  function abrirModalEliminar(id) {
+  function abrirEliminar(id) {
     eliminarId = id;
     document.getElementById('modal-eliminar').classList.add('open');
   }
-  function cerrarModal() {
-    document.getElementById('modal-eliminar').classList.remove('open');
-    eliminarId = null;
-  }
+
   function confirmarEliminar() {
-    if (eliminarId) ref.child(eliminarId).remove();
-    cerrarModal();
+    if (eliminarId) {
+      facturasRef.child(eliminarId).remove();
+      comentariosRef.child(eliminarId).remove();
+    }
+    cerrarModal('modal-eliminar');
+    toast('🗑️ Entrada eliminada');
+  }
+
+  function cerrarModal(id) {
+    document.getElementById(id).classList.remove('open');
+    if (id === 'modal-eliminar') eliminarId = null;
   }
 
   // ── Filtros ───────────────────────────────────────────────────
@@ -316,73 +672,179 @@
     renderLista();
   }
 
+  function toggleSeccionDudas() {
+    seccionDudasColapsada = !seccionDudasColapsada;
+    renderLista();
+  }
+
   // ── Render ────────────────────────────────────────────────────
-  function formatFecha(iso) {
+  function fmtFecha(iso) {
+    if (!iso) return '';
     const d = new Date(iso);
-    return d.toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit', year:'2-digit' })
-      + ' ' + d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
+    return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' })
+      + ' ' + d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function renderItem(f) {
+    const est = ESTADOS[f.estado];
+    const esDuda = f.tipo === 'duda';
+    const importeStr = f.importe != null ? `<strong>💶 ${parseFloat(f.importe).toFixed(2)} €</strong>` : '';
+    const actStr = f.fechaActualizacion && f.fechaActualizacion !== f.fechaCreacion
+      ? `<span title="Actualizado">✏️ ${fmtFecha(f.fechaActualizacion)}</span>` : '';
+    const comEnts = comentarios[f.id] ? Object.entries(comentarios[f.id]) : [];
+    const nCom = comEnts.length;
+    const showCom = expandedComments.has(f.id);
+
+    const comSection = showCom ? `
+      <div class="item-comments">
+        <div class="comments-title">
+          💬 Comentarios
+          ${nCom > 0 ? `<span class="comment-count-badge">${nCom}</span>` : ''}
+        </div>
+        ${comEnts.length > 0
+          ? comEnts.map(([cid, c]) => `
+            <div class="comment-item">
+              <div class="comment-text">${esc(c.texto)}</div>
+              <div class="comment-meta">
+                <span>${fmtFecha(c.fecha)}</span>
+                <button class="comment-delete" onclick="eliminarComentario('${f.id}','${cid}')">✕ Eliminar</button>
+              </div>
+            </div>`).join('')
+          : `<p style="font-size:13px;color:var(--muted);margin-bottom:8px;">Sin comentarios aún.</p>`
+        }
+        <div class="comment-form">
+          <input type="text" id="cinp-${f.id}" placeholder="Añadir comentario..."
+            onkeydown="if(event.key==='Enter')enviarComentario('${f.id}')" />
+          <button class="btn-send-comment" onclick="enviarComentario('${f.id}')">Enviar</button>
+        </div>
+      </div>` : '';
+
+    const claseItem = esDuda ? 'item es-duda' : (f.urgencia === 'Alta' ? 'item urgente' : 'item');
+
+    return `
+      <div class="${claseItem}">
+        <div class="item-main">
+          <div class="item-header">
+            <div class="item-nombre">${esc(f.nombre)}</div>
+            ${esDuda
+              ? `<span class="badge badge-duda">❓ Duda</span>`
+              : `<span class="badge ${est.clase}">${est.label}</span>`
+            }
+          </div>
+          <div class="item-meta">
+            <span class="platform-tag">${esc(f.plataforma)}</span>
+            <span class="badge badge-urg-${f.urgencia}">⚡ ${f.urgencia}</span>
+            ${importeStr}
+            <span>📅 ${fmtFecha(f.fechaCreacion)}</span>
+            ${actStr}
+          </div>
+          ${f.nota ? `<div class="item-nota">📝 ${esc(f.nota)}</div>` : ''}
+          <div class="item-actions">
+            ${!esDuda && est.siguiente
+              ? `<button class="btn btn-sm btn-avanzar" onclick="avanzarEstado('${f.id}')">${est.siguiente}</button>`
+              : (!esDuda ? `<span style="font-size:12px;color:var(--success);font-weight:700;">✅ Completado</span>` : '')
+            }
+            <button class="btn btn-sm btn-editar" onclick="abrirEditar('${f.id}')">✏️ Editar</button>
+            <button class="btn btn-sm btn-comentar" onclick="toggleComentarios('${f.id}')">
+              💬 ${nCom > 0 ? nCom + ' comentario' + (nCom !== 1 ? 's' : '') : 'Comentarios'} ${showCom ? '▲' : '▼'}
+            </button>
+            <button class="btn btn-sm btn-eliminar" style="margin-left:auto" onclick="abrirEliminar('${f.id}')">🗑️</button>
+          </div>
+        </div>
+        ${comSection}
+      </div>`;
   }
 
   function renderLista() {
-    const lista = document.getElementById('lista');
+    const contenedor = document.getElementById('lista');
+    const buscar = (document.getElementById('inp-buscar')?.value || '').toLowerCase().trim();
 
     let arr = Object.entries(facturas).map(([id, f]) => ({ id, ...f }));
 
-    if (filtroActual !== 'todos') arr = arr.filter(f => f.estado === filtroActual);
+    // Aplicar filtro de estado (solo a facturas, no dudas)
+    let arrFiltrado = arr;
+    if (filtroActual !== 'todos') {
+      arrFiltrado = arr.filter(f => f.tipo === 'duda' || f.estado === filtroActual);
+    }
 
-    // Alta urgencia primero, luego más reciente
-    arr.sort((a, b) => {
+    // Búsqueda
+    if (buscar) {
+      arrFiltrado = arrFiltrado.filter(f =>
+        (f.nombre || '').toLowerCase().includes(buscar) ||
+        (f.plataforma || '').toLowerCase().includes(buscar) ||
+        (f.nota || '').toLowerCase().includes(buscar)
+      );
+    }
+
+    // Separar en dos grupos
+    const facturaItems = arrFiltrado.filter(f => !f.tipo || f.tipo === 'factura');
+    const dudaItems = arrFiltrado.filter(f => f.tipo === 'duda');
+
+    // Ordenar: alta urgencia primero, luego más reciente
+    const sortFn = (a, b) => {
       const u = { Alta: 0, Media: 1, Baja: 2 };
       if (u[a.urgencia] !== u[b.urgencia]) return u[a.urgencia] - u[b.urgencia];
       return new Date(b.fechaCreacion) - new Date(a.fechaCreacion);
-    });
+    };
+    facturaItems.sort(sortFn);
+    dudaItems.sort(sortFn);
 
-    document.getElementById('contador').textContent =
-      arr.length + (arr.length === 1 ? ' factura' : ' facturas');
+    const total = facturaItems.length + dudaItems.length;
+    document.getElementById('contador').textContent = total + (total === 1 ? ' entrada' : ' entradas');
 
-    if (arr.length === 0) {
-      lista.innerHTML = `<div class="empty"><div class="icon">📭</div><p>No hay facturas en este estado.</p></div>`;
-      return;
+    let html = '';
+
+    // Sección facturas
+    html += `
+      <div class="seccion-header seccion-facturas">
+        <h3>📋 Facturas pendientes</h3>
+        <span class="seccion-count">${facturaItems.length} factura${facturaItems.length !== 1 ? 's' : ''}</span>
+      </div>`;
+
+    if (facturaItems.length === 0) {
+      html += `<div class="empty-section">📭 No hay facturas${buscar ? ' para esa búsqueda' : ' en este estado'}.</div>`;
+    } else {
+      html += `<div class="lista">${facturaItems.map(renderItem).join('')}</div>`;
     }
 
-    lista.innerHTML = arr.map(f => {
-      const est = ESTADOS[f.estado];
-      const importeStr = f.importe != null ? `<strong>${parseFloat(f.importe).toFixed(2)} €</strong>` : '';
-      const actualizado = f.fechaActualizacion && f.fechaActualizacion !== f.fechaCreacion
-        ? `<span>· Act: ${formatFecha(f.fechaActualizacion)}</span>` : '';
+    // Sección dudas
+    html += `
+      <div class="seccion-header seccion-dudas">
+        <h3>❓ Dudas y consultas</h3>
+        <span class="seccion-count">${dudaItems.length} caso${dudaItems.length !== 1 ? 's' : ''}</span>
+        <button class="seccion-toggle" onclick="toggleSeccionDudas()" title="${seccionDudasColapsada ? 'Expandir' : 'Colapsar'}">
+          ${seccionDudasColapsada ? '▼ Mostrar' : '▲ Ocultar'}
+        </button>
+      </div>`;
 
-      return `
-        <div class="item">
-          <div class="item-header">
-            <div class="item-nombre">${esc(f.nombre)}</div>
-            <span class="badge ${est.clase}">${est.label}</span>
-          </div>
-          <div class="item-meta">
-            <span class="platform-icon">${esc(f.plataforma)}</span>
-            <span class="badge badge-urg-${f.urgencia}">⚡ ${f.urgencia}</span>
-            ${importeStr}
-            <span>📅 ${formatFecha(f.fechaCreacion)}</span>
-            ${actualizado}
-          </div>
-          ${f.nota ? `<div class="item-nota">💬 ${esc(f.nota)}</div>` : ''}
-          <div class="item-actions">
-            ${est.siguiente
-              ? `<button class="btn btn-sm btn-avanzar" onclick="avanzarEstado('${f.id}')">${est.siguiente}</button>`
-              : '<span style="font-size:13px;color:var(--success);font-weight:600;">✅ Completado</span>'
-            }
-            <button class="btn btn-sm btn-eliminar" onclick="abrirModalEliminar('${f.id}')">🗑️ Eliminar</button>
-          </div>
-        </div>
-      `;
-    }).join('');
+    if (!seccionDudasColapsada) {
+      if (dudaItems.length === 0) {
+        html += `<div class="empty-section">✅ Sin dudas pendientes.</div>`;
+      } else {
+        html += `<div class="lista">${dudaItems.map(renderItem).join('')}</div>`;
+      }
+    }
+
+    contenedor.innerHTML = html;
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────
+  let toastTimer;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
   }
 
   function esc(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  document.getElementById('modal-eliminar').addEventListener('click', function(e) {
-    if (e.target === this) cerrarModal();
+  ['modal-eliminar', 'modal-editar', 'modal-plataformas'].forEach(id => {
+    document.getElementById(id).addEventListener('click', function(e) {
+      if (e.target === this) cerrarModal(id);
+    });
   });
 </script>
 </body>
